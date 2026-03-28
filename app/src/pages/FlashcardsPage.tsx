@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import FlipCard from '../components/ui/FlipCard';
+import { Trash2 } from 'lucide-react';
 import styles from './FlashcardsPage.module.css';
 
 interface Deck {
@@ -46,6 +47,11 @@ const FlashcardsPage: React.FC = () => {
     setDecks([newDeck, ...decks]);
   };
 
+  const handleDeleteDeck = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    setDecks(decks.filter(d => d.id !== id));
+  };
+
   // Keyboard shortcuts
   React.useEffect(() => {
     if (!selectedDeck) return;
@@ -87,13 +93,20 @@ const FlashcardsPage: React.FC = () => {
         </div>
         <div className={styles.decksGrid}>
           {decks.map(deck => (
-            <button
+            <div
               key={deck.id}
               className={styles.deckCard}
               onClick={() => { setSelectedDeck(deck.id); setCardIdx(0); }}
               id={`deck-${deck.id}`}
               style={{ borderTopColor: deck.color }}
             >
+              <div 
+                className={styles.deleteDeckBtn} 
+                onClick={(e) => handleDeleteDeck(e, deck.id)}
+                title="Delete Deck"
+              >
+                <Trash2 size={16} />
+              </div>
               <span className={styles.deckTitle}>{deck.title}</span>
               <div className={styles.deckMeta}>
                 <span className={styles.deckCount}>{deck.count} cards</span>
@@ -104,7 +117,7 @@ const FlashcardsPage: React.FC = () => {
               <div className={styles.deckProgress}>
                 <div className={styles.progressBar} style={{ width: `${((deck.count - deck.due) / deck.count) * 100}%`, background: deck.color }} />
               </div>
-            </button>
+            </div>
           ))}
         </div>
       </div>

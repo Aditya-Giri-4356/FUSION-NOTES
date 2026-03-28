@@ -20,6 +20,7 @@
 }
 
 .deckCard {
+  position: relative;
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-top-width: 3px;
@@ -37,6 +38,28 @@
   background: var(--bg-glass-hover);
   transform: translateY(-3px);
   box-shadow: var(--shadow-hover);
+}
+
+.deckCard:hover .deleteDeckBtn {
+  opacity: 1;
+}
+
+.deleteDeckBtn {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  opacity: 0;
+  transition: all var(--duration-fast);
+  padding: 4px;
+}
+
+.deleteDeckBtn:hover {
+  color: #ef4444;
+  transform: scale(1.1);
 }
 
 .deckTitle {
