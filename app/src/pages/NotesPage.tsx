@@ -60,7 +60,7 @@ const NotesPage: React.FC<NotesPageProps> = ({ noteFilter, setNoteFilter, token 
       }
     } catch (e) {
       console.warn("Backend unavailable, loading visually rich mock data for UI testing.", e);
-      setNotes([
+      const fallback = [
         { 
           id: '1', 
           title: 'Information Lifecycle Management', 
@@ -77,7 +77,9 @@ It represents the journey of the data from creation to disposal, highlighting st
 **Lifecycle Diagram:**
 1. Creation -> 2. Storage -> 3. Retrieval -> 4. Usage -> 5. Retirement -> (Cycle repeats)` 
         }
-      ]);
+      ];
+      setNotes(fallback);
+      localStorage.setItem('fusion_notes', JSON.stringify(fallback));
     }
   }, [noteFilter, token]);
 

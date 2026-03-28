@@ -19,26 +19,68 @@ interface Card {
 
 const DECKS: Deck[] = [];
 
-const CARDS: Card[] = [
-  { id: 'c1', question: 'What is Information Lifecycle Management?', answer: 'It represents the journey of the data from creation to disposal, highlighting stages the data passes through in its lifetime.' },
-  { id: 'c2', question: 'What is the primary goal of Information Lifecycle Management?', answer: 'To organize and face the challenges of efficiently managing information throughout its entire lifecycle.' },
-  { id: 'c3', question: 'What is the first phase of the Information Lifecycle?', answer: 'Creation is the first phase, right before Storage.' },
-  { id: 'c4', question: 'Name all 5 absolute stages in the Information Lifecycle diagram.', answer: '1. Creation → 2. Storage → 3. Retrieval → 4. Usage → 5. Retirement' },
-];
+// Lightweight NLP sentence parser for offline flashcard generation
+const generateDynamicCards = (text: string): Card[] => {
+  if (!text) return [];
+  const sentences = text.match(/[^.!?\n]+[.!?\n]+/g) || [text];
+  
+  return sentences.map((s, i) => {
+    const clean = s.trim();
+    const words = clean.split(' ').filter(w => w.length > 2);
+    if (words.length < 3) return null;
+    
+    // Pick a significant target word
+    const targetWord = words[Math.floor(words.length / 2)];
+    const hidden = clean.replace(targetWord, '_____');
+    
+    return {
+      id: `gen-c-${Math.random()}-${i}`,
+      question: `Fill in the blank: ${hidden}`,
+      answer: targetWord.replace(/[.,!?:]/g, '')
+    };
+  }).filter(Boolean) as Card[];
+};
 
 const FlashcardsPage: React.FC = () => {
   const [decks, setDecks] = useState<Deck[]>(DECKS);
+  const [activeCards, setActiveCards] = useState<Card[]>([]);
+  const [deckCardsMap, setDeckCardsMap] = useState<Record<string, Card[]>>({});
   const [selectedDeck, setSelectedDeck] = useState<string | null>(null);
   const [cardIdx, setCardIdx] = useState(0);
 
   const handleCreateDeck = () => {
+    // 1. Pull dynamic Notes from the bridge
+    const pureData = localStorage.getItem('fusion_notes');
+    let sourceText = "No readable notes found to extract.";
+    let generatedCards: Card[] = [];
+
+    if (pureData) {
+      try {
+        const notes = JSON.parse(pureData);
+        if (notes.length > 0) {
+           sourceText = notes.map((n: { fullText: string }) => n.fullText).join('. ');
+           generatedCards = generateDynamicCards(sourceText);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    if (generatedCards.length === 0) {
+      alert("No valid sentences found in notes to generate Flashcards natively! Add more comprehensive notes.");
+      return;
+    }
+
+    const dId = `d${decks.length + 1}`;
     const newDeck: Deck = {
-      id: `d${decks.length + 1}`,
-      title: 'Synthesized from Notes',
-      count: 4,
-      due: 4,
-      color: '#a78bfa' // Theme accent color
+      id: dId,
+      title: `Deck ${decks.length + 1} from Notes`,
+      count: generatedCards.length,
+      due: generatedCards.length,
+      color: '#a78bfa'
     };
+    
+    setDeckCardsMap(prev => ({...prev, [dId]: generatedCards}));
     setDecks([newDeck, ...decks]);
   };
 
@@ -54,12 +96,12 @@ const FlashcardsPage: React.FC = () => {
       // Space to flip
       if (e.code === 'Space') {
         e.preventDefault();
-        const flipEl = document.getElementById(`flipcard-${CARDS[cardIdx % CARDS.length].id}`);
+        const flipEl = document.getElementById(`flipcard-${activeCards[cardIdx % activeCards.length]?.id}`);
         if (flipEl) flipEl.click();
       }
       // Left/Right to navigate
       else if (e.key === 'ArrowRight') {
-        if (cardIdx < CARDS.length - 1) setCardIdx(i => i + 1);
+        if (cardIdx < activeCards.length - 1) setCardIdx(i => i + 1);
       }
       else if (e.key === 'ArrowLeft') {
         if (cardIdx > 0) setCardIdx(i => i - 1);
@@ -75,7 +117,7 @@ const FlashcardsPage: React.FC = () => {
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [selectedDeck, cardIdx]);
+  }, [selectedDeck, cardIdx, activeCards]);
 
   if (!selectedDeck) {
     return (
@@ -96,7 +138,11 @@ const FlashcardsPage: React.FC = () => {
             <div
               key={deck.id}
               className={styles.deckCard}
-              onClick={() => { setSelectedDeck(deck.id); setCardIdx(0); }}
+              onClick={() => { 
+                setSelectedDeck(deck.id); 
+                setActiveCards(deckCardsMap[deck.id] || []);
+                setCardIdx(0); 
+              }}
               id={`deck-${deck.id}`}
               style={{ borderTopColor: deck.color }}
             >
@@ -125,8 +171,8 @@ const FlashcardsPage: React.FC = () => {
   }
 
   const deck = decks.find(d => d.id === selectedDeck)!;
-  const card = CARDS[cardIdx % CARDS.length];
-  const progress = Math.round((cardIdx / CARDS.length) * 100);
+  const card = activeCards[cardIdx % activeCards.length] || { id: 'null', question: 'No active cards generated...', answer: 'Add more notes.' };
+  const progress = Math.round((cardIdx / Math.max(1, activeCards.length)) * 100);
 
   return (
     <div className={styles.page}>
@@ -135,8 +181,8 @@ const FlashcardsPage: React.FC = () => {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="15 18 9 12 15 6"/></svg>
           Decks
         </button>
-        <span className={styles.deckName}>{deck.title}</span>
-        <span className={styles.cardCount}>{cardIdx + 1} / {CARDS.length}</span>
+        <span className={styles.deckName}>{deck?.title}</span>
+        <span className={styles.cardCount}>{cardIdx + 1} / {Math.max(1, activeCards.length)}</span>
       </div>
 
       {/* Progress */}
@@ -175,7 +221,7 @@ const FlashcardsPage: React.FC = () => {
           <button className={styles.rateBtn} style={{ '--c': '#facc15' } as React.CSSProperties} id="rate-ok">Okay</button>
           <button className={styles.rateBtn} style={{ '--c': '#4ade80' } as React.CSSProperties} onClick={() => setCardIdx(i => i + 1)} id="rate-easy">Easy</button>
         </div>
-        <button className="btn-ghost" onClick={() => setCardIdx(i => i + 1)} disabled={cardIdx >= CARDS.length - 1} id="next-card">
+        <button className="btn-ghost" onClick={() => setCardIdx(i => i + 1)} disabled={cardIdx >= activeCards.length - 1} id="next-card">
           Next
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
