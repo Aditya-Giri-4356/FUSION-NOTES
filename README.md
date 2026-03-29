@@ -1,65 +1,44 @@
-# 🌌 FusionNotes
+# FusionNotes: A Unified Approach to Context-Aware Collaborative Learning
 
-Welcome to **FusionNotes**! We didn't just build another note-taking app—we built an aesthetic, AI-powered collaborative study powerhouse. FusionNotes combines an ultra-smooth, dark-themed UI with a robust FastAPI backend, Supabase for scalable database & authentication, and Google's Gemini AI for flawless OCR and note synthesis.
+## The Problem: The Disconnect in Student Learning
+Modern education is characterized by fast-paced lectures and a massive cognitive load. Students often take unstructured, context-dependent notes during these sessions, which quickly become difficult to decipher or understand as time passes. This fragmentation leads to inefficient revision cycles where learners spend more time re-learning old concepts than reinforcing new ones.
 
-## ✨ Core Features & The Sauce
+Furthermore, traditional peer learning remains significantly underutilized. Social hesitation, the difficulty of finding suitable study partners, and the absence of structured collaboration systems mean that collective intelligence is rarely harnessed. This disconnect between individual note-taking and collaborative learning results in poor knowledge retention, reduced engagement, and increased academic stress.
 
-### 🤖 Collaborative AI Synthesis & OCR
-- **Gemini-Powered OCR:** Upload photos of your handwritten notes or PDFs to any subject, and Gemini 2.5 Flash automatically extracts and formats the text into clean Markdown.
-- **Group Knowledge Synthesis:** When multiple students upload notes to the same subject (e.g., Biology), anyone can hit **"✧ Synthesize Guide"**. Gemini cross-references every single note in the database for that subject, fills in the gaps, and instantly generates a master study guide.
-- **Rich Rendering:** Synthesized guides support mathematical LaTeX formulas (KaTeX), markdown tables, and even automatically generate Mermaid flowcharts to visualize complex structures.
+## The Solution: FusionNotes
+FusionNotes is designed to bridge the gap between personal understanding and peer interaction. By providing a unified platform that transforms fragmented, unstructured data into stable, high-quality knowledge, we empower students to learn more effectively together.
 
-### 🔒 Secure Backend Architecture
-- **Supabase Authentication:** Secure, JWT-based user registration and login flow.
-- **Row-Level Bypassing:** The FastAPI backend securely manages database writes using a dedicated Supabase Admin client, ensuring safe, centralized AI synthesis without exposing permissions to the client.
-- **FastAPI Core:** A lightning-fast API layer handling all cross-origin requests, file uploads, and AI prompt orchestration.
+### Context-Aware Intelligent Ingestion
+FusionNotes leverages a FastAPI backend and Google Gemini 2.5 Flash to process unstructured session data. When a student captures a photo of handwritten notes or a PDF, our OCR pipeline does more than just extract text; it understands the context of the lecture, formatting raw data into structured, readable Markdown. This ensures that notes taken in the heat of a fast-paced lecture remain intelligible and useful for long-term revision.
 
-### 🎨 High-End UI/UX
-- **Monochrome Mastery & High-Res Glassmorphism:** Sleek, high-contrast black-and-white design system built on translucent, ultra-blurred glass panels.
-- **Hyprland Physics:** Every button pop, hover effect, floating panel, and overlay entrance uses an over-damped spring animation so it feels bouncy, snappy, and alive.
-- **Subject-First Organization:** Notes are strictly organized by subjects with dedicated context bars, sort controls (Newest, A-Z), and scoped search.
+### Automated Collaborative Synthesis
+To solve the "social hesitation" and "partner matching" problems, FusionNotes acts as a neutral, AI-powered mediator for peer learning. In a collective subject environment, students contribute their individual perspectives to a shared topic. Our synthesis engine cross-references every contributed note, identifies core conceptual overlaps, fills in intellectual gaps, and generates a master study guide. This allows students to benefit from peer intelligence without the friction of traditional group work.
 
-## 🛠️ Tech Stack & Environment
+### High-Fidelity Knowledge Representation
+For complex scientific and mathematical subjects, knowledge retention is tied to visualization. FusionNotes supports:
+- Mathematical LaTeX formulas through KaTeX for scientific accuracy.
+- Mermaid flowcharts for visualizing complex biological or historical sequences.
+- Structured Markdown tables for data comparison.
+This multi-modal approach ensures that the "context" of the learning is preserved in the final master guide.
 
-**Frontend:**
-- **React 18** + **Vite** + **TypeScript**
-- **react-markdown** / **rehype-katex** / **mermaid** (For rich Master Guide rendering)
-- **Lucide React** (Icons)
+## Tech Stack and Technical Depth
+Our solution is built on a robust, scalable architecture designed for real-world academic scenarios:
+- Frontend: React 18 with TypeScript for a type-safe, responsive user interface.
+- Backend: FastAPI (Python) for high-performance API orchestration and file handling.
+- Intelligence: Google Generative AI (Gemini 2.5 Flash) for state-of-the-art OCR and synthesis.
+- Infrastructure: Supabase for secure JWT-based authentication and a managed PostgreSQL database.
+- Rendering: A custom synthesis renderer integrating react-markdown, rehype-katex, and mermaid-js.
 
-**Backend:**
-- **FastAPI** (Python web framework)
-- **Supabase** (PostgreSQL Database + Auth + Storage)
-- **Google GenAI SDK** (Gemini 2.5 Flash)
+## Competitive Alignment and Marking Rubric
 
-## 🚀 Running Locally
+### Innovation and Originality
+FusionNotes moves beyond simple cloud storage. Our "Group Knowledge Synthesis" approach is a novel solution to peer learning gaps, providing a distinctive way to generate collective intelligence from fragmented individual effort.
 
-### 1. Backend Setup
-Navigate to the `hack` directory and set up your Python environment:
-```bash
-cd hack
-python -m venv venv
-venv\Scripts\activate  # Windows
-pip install -r requirements.txt
-```
-Make sure you have a `.env` file in the `hack` directory with:
-```
-SUPABASE_URL=your_supabase_url
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-GEMINI_API_KEY=your_gemini_api_key
-```
-Start the backend server:
-```bash
-uvicorn main:app --reload --port 3000
-```
+### Technical Implementation
+The system demonstrates depth through its integration of AI-driven OCR, multi-format rendering (LaTeX/Mermaid), and a secure full-stack architecture. We handle complex edge cases such as varying handwriting quality and multi-student synthesis conflicts at the API layer.
 
-### 2. Frontend Setup
-Open a new terminal, navigate to the `app` directory:
-```bash
-cd app
-npm install
-npm run dev
-```
-The frontend will start on port `5173` and automatically proxy `/api` requests to the backend on port `3000`.
+### Feasibility and Scalability
+By utilizing managed services like Supabase and Google Gemini, FusionNotes is highly scalable and reliable. The system is designed for practical classroom use, with a focus on low-latency interactions and high usability.
 
----
-*Built with ❤️ for collaborative studying.*
+## Open Source and Ethics
+FusionNotes is a fully open-source project created to foster better learning environments globally. It requires no payment or subscription, ensuring that professional-grade collaborative tools are accessible to all students regardless of financial constraints.
