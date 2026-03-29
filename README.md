@@ -1,5 +1,8 @@
 <img src="app/public/darklogo.png" width="240" alt="FusionNotes Logo" />
 
+
+DEMONSTRATION LINK: https://drive.google.com/drive/folders/1hvLkbhq6KRPkW2lDH4f2UZ5izQP9CEzL?usp=sharing
+
 ### The AI-Powered Collaborative Study Suite
 
 FusionNotes is a next-generation, aesthetic Progressive Web App (PWA) designed to synchronize fragmented study materials into unified, AI-synthesized master guides. We built it with a focus on high-end user experience and robust real-time collaboration.
