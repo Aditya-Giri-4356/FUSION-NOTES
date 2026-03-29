@@ -1,8 +1,4 @@
-# FusionNotes
-
-<p align="center">
-  <img src="app/public/darklogo.png" width="180" alt="FusionNotes Logo" />
-</p>
+<img src="app/public/darklogo.png" width="240" alt="FusionNotes Logo" />
 
 ### The AI-Powered Collaborative Study Suite
 
