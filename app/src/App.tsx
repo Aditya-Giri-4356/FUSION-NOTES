@@ -3,6 +3,7 @@ import type { Note } from './types/note';
 import { ThemeProvider } from './context/ThemeContext';
 import AnimatedBackground from './components/AnimatedBackground';
 import TopBar from './components/layout/TopBar';
+import MobileSidebar from './components/layout/MobileSidebar';
 import PageLayout from './components/layout/PageLayout';
 import { DashboardSide, FlashcardSide, ChatSide, NotesSide } from './components/layout/SidePanels';
 import DashboardPage from './pages/DashboardPage';
@@ -37,10 +38,21 @@ type Tab = 'dashboard' | 'notes' | 'flashcard' | 'chat';
 const App: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [user, setUser] = useState<{ id: string; email: string; username?: string } | null>(null);
   const [activeTab, setActiveTab] = useState<Tab>('dashboard');
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [noteFilter, setNoteFilter] = useState('All Subjects');
   const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(INITIAL_CHAT);
+  
+  // Mobile UI State
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   
   // Lifted Notes State
   const [notes, setNotes] = useState<Note[]>([]);
@@ -115,6 +127,13 @@ const App: React.FC = () => {
     setSearchQuery(null);
   };
 
+  const handleLogout = () => {
+    setJwtToken(null);
+    setIsAuthenticated(false);
+    setUser(null);
+    setActiveTab('dashboard');
+  };
+
   const mainContent = searchQuery ? (
     <SearchResultsView query={searchQuery} onBack={handleBackFromSearch} />
   ) : activeTab === 'dashboard' ? (
@@ -124,7 +143,12 @@ const App: React.FC = () => {
       notes={notes}
       onUpload={handleUpload}
       isUploading={isUploading}
-      onSelectNote={(id) => { setSelectedNoteId(id); setActiveTab('notes'); }}
+      onSelectNote={(id: string) => { setSelectedNoteId(id); setActiveTab('notes'); }}
+      user={user}
+      isMobile={isMobile}
+      onSearch={handleSearch}
+      activeTab={activeTab}
+      onLogout={handleLogout}
     />
   ) : activeTab === 'notes' ? (
     <NotesPage 
@@ -155,14 +179,28 @@ const App: React.FC = () => {
   return (
     <ThemeProvider>
       {!isAuthenticated ? (
-        <AuthPage onLogin={(token) => { setJwtToken(token); setIsAuthenticated(true); }} />
+        <AuthPage onLogin={(token, userData) => { 
+          setJwtToken(token); 
+          setUser(userData);
+          setIsAuthenticated(true); 
+        }} />
       ) : (
         <div className={styles.appShell}>
           <AnimatedBackground />
+          <MobileSidebar 
+            isOpen={isSidebarOpen} 
+            onClose={() => setIsSidebarOpen(false)} 
+            user={user} 
+            onLogout={handleLogout} 
+          />
           <TopBar
             activeTab={activeTab}
             onTabChange={handleTabChange}
             onSearch={handleSearch}
+            user={user}
+            onLogout={handleLogout}
+            isMobile={isMobile}
+            onMenuClick={() => setIsSidebarOpen(true)}
           />
           <PageLayout
             main={

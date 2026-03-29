@@ -6,7 +6,7 @@ import { LogIn, UserPlus, User, Mail, Loader } from 'lucide-react';
 
 type Mode = 'login' | 'register';
 
-export const AuthPage: React.FC<{ onLogin: (token: string) => void }> = ({ onLogin }) => {
+export const AuthPage: React.FC<{ onLogin: (token: string, user: any) => void }> = ({ onLogin }) => {
   const { t } = useTranslation();
   const [mode, setMode] = useState<Mode>('login');
 
@@ -43,7 +43,7 @@ export const AuthPage: React.FC<{ onLogin: (token: string) => void }> = ({ onLog
       });
       const data = await res.json();
       if (res.ok && data.access_token) {
-        onLogin(data.access_token);
+        onLogin(data.access_token, data.user);
       } else {
         setErrorMsg(data.detail || 'Authentication failed');
       }
@@ -120,11 +120,11 @@ export const AuthPage: React.FC<{ onLogin: (token: string) => void }> = ({ onLog
               <p className={styles.subtitle}>{t('auth.loginSubtitle')}</p>
 
               <div className={styles.providers}>
-                <button className={`${styles.btnProvider} pill-btn`} onClick={() => onLogin('mock-github-jwt')}>
+                <button className={`${styles.btnProvider} pill-btn`} onClick={() => onLogin('mock-github-jwt', { username: 'GitHub User', email: 'github@example.com' })}>
                   <User size={20} />
                   {t('auth.continueGithub')}
                 </button>
-                <button className={`${styles.btnProvider} pill-btn`} onClick={() => onLogin('mock-email-jwt')}>
+                <button className={`${styles.btnProvider} pill-btn`} onClick={() => onLogin('mock-email-jwt', { username: 'Email User', email: 'email@example.com' })}>
                   <Mail size={20} />
                   {t('auth.continueEmail')}
                 </button>

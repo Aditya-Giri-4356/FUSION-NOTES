@@ -26,8 +26,11 @@
     "backendError": "Could not connect to backend."
   },
   "dashboard": {
-    "greeting": "Welcome back, Aditya",
-    "reviewHint": "You have 1 new scanned note to review.",
+    "greeting": "Welcome back, {{name}}",
+    "newNotesHint": "You have 1 new scanned note to review.",
+    "noNotesHint": "You have 0 scanned notes to review.",
+    "quickNote": "Quick Note",
+    "enterNotePrompt": "Enter text for your note:",
     "newNote": "New Note",
     "totalNotes": "Total Notes",
     "flashcards": "Flashcards",

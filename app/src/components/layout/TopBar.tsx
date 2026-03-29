@@ -12,11 +12,15 @@ interface TopBarProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   onSearch: (query: string) => void;
+  user: { id: string; email: string; username?: string } | null;
+  onLogout: () => void;
+  isMobile?: boolean;
+  onMenuClick?: () => void;
 }
 
 type PanelType = 'notifications' | 'profile' | null;
 
-const TopBar: React.FC<TopBarProps> = ({ activeTab, onTabChange, onSearch }) => {
+const TopBar: React.FC<TopBarProps> = ({ activeTab, onTabChange, onSearch, user, onLogout, isMobile, onMenuClick }) => {
   const { logo } = useTheme();
   const { t } = useTranslation();
   const [activePanel, setActivePanel] = useState<PanelType>(null);
@@ -79,13 +83,13 @@ const TopBar: React.FC<TopBarProps> = ({ activeTab, onTabChange, onSearch }) => 
                 <>
                   <div className={styles.panelItem}>
                     <User size={18} className={styles.panelItemIcon} />
-                    <span>Alex Student</span>
+                    <span>{user?.username || 'Student'}</span>
                   </div>
                   <div className={styles.panelItem}>
                     <Settings size={18} className={styles.panelItemIcon} />
                     <span>{t('topbar.preferences')}</span>
                   </div>
-                  <div className={styles.panelItem} style={{ color: 'var(--accent)' }}>
+                  <div className={styles.panelItem} style={{ color: 'var(--accent)', cursor: 'pointer' }} onClick={onLogout}>
                     <LogOut size={18} className={styles.panelItemIcon} />
                     <span>{t('topbar.signOut')}</span>
                   </div>
@@ -131,23 +135,33 @@ const TopBar: React.FC<TopBarProps> = ({ activeTab, onTabChange, onSearch }) => 
         />
       </div>
 
-      <div className={styles.centerZone}>
-        <AISearchBar onSearch={onSearch} />
-        <NavPills activeTab={activeTab} onTabChange={onTabChange} />
-      </div>
+      {!isMobile && (
+        <div className={styles.centerZone}>
+          <AISearchBar onSearch={onSearch} />
+          <NavPills activeTab={activeTab} onTabChange={onTabChange} />
+        </div>
+      )}
 
       <div className={styles.actionsZone}>
-        <LanguageSelector />
-        <ThemeToggle />
-        <div className={styles.notifBtnWrap}>
-          <button className="icon-btn" title={t('topbar.notifications')} onClick={() => { setActivePanel('notifications'); setHasUnread(false); }}>
-            <Bell size={18} />
+        {isMobile ? (
+          <button className="icon-btn" onClick={onMenuClick}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
           </button>
-          {hasUnread && <span className={styles.notifBadge} />}
-        </div>
-        <button className={styles.avatar} title={t('topbar.accountSettings')} onClick={() => setActivePanel('profile')}>
-          <span>A</span>
-        </button>
+        ) : (
+          <>
+            <LanguageSelector />
+            <ThemeToggle />
+            <div className={styles.notifBtnWrap}>
+              <button className="icon-btn" title={t('topbar.notifications')} onClick={() => { setActivePanel('notifications'); setHasUnread(false); }}>
+                <Bell size={18} />
+              </button>
+              {hasUnread && <span className={styles.notifBadge} />}
+            </div>
+            <button className={styles.avatar} title={t('topbar.accountSettings')} onClick={() => setActivePanel('profile')}>
+              <span>{(user?.username || 'S')[0].toUpperCase()}</span>
+            </button>
+          </>
+        )}
       </div>
     </header>
 

@@ -51,3 +51,39 @@
   .grid { grid-template-columns: 1fr; }
   .statsRow { flex-direction: column; }
 }
+
+/* Mobile Nav Stack */
+.mobileNavStack {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg-glass);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+  border: 1px solid var(--border-glass);
+  backdrop-filter: blur(10px);
+}
+
+.pillsScrollContainer {
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pillsScrollContainer::-webkit-scrollbar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobileNavStack {
+    display: flex;
+  }
+  .page {
+    padding: 16px;
+  }
+  .greeting {
+    font-size: 20px;
+  }
+}

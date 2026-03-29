@@ -12,6 +12,37 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { MermaidChart } from '../components/ui/MermaidChart';
 
+const StudyGuideRenderer: React.FC<{ content: string }> = ({ content }) => {
+  return (
+    <ReactMarkdown
+      remarkPlugins={[remarkMath, remarkGfm]}
+      rehypePlugins={[rehypeKatex]}
+      components={{
+        code({ node, inline, className, children, ...props }: any) {
+          const match = /language-(\w+)/.exec(className || '');
+          if (!inline && match && match[1] === 'mermaid') {
+            return <MermaidChart chart={String(children).replace(/\n$/, '')} />;
+          }
+          return (
+            <code className={className} style={{ background: '#1e1e2e', padding: '2px 4px', borderRadius: '4px', fontSize: '90%' }} {...props}>
+              {children}
+            </code>
+          );
+        },
+        h1: ({node, ...props}) => <h1 style={{ marginTop: '1.5em', marginBottom: '0.5em', color: '#fff', fontSize: '1.8em', borderBottom: '1px solid #333', paddingBottom: '0.3em' }} {...props} />,
+        h2: ({node, ...props}) => <h2 style={{ marginTop: '1.2em', marginBottom: '0.5em', color: '#e2e8f0', fontSize: '1.4em' }} {...props} />,
+        h3: ({node, ...props}) => <h3 style={{ marginTop: '1em', marginBottom: '0.5em', color: '#cbd5e1', fontSize: '1.1em' }} {...props} />,
+        p: ({node, ...props}) => <p style={{ marginBottom: '1em', lineHeight: '1.7' }} {...props} />,
+        ul: ({node, ...props}) => <ul style={{ paddingLeft: '1.5em', marginBottom: '1em' }} {...props} />,
+        li: ({node, ...props}) => <li style={{ marginBottom: '0.25em' }} {...props} />,
+        a: ({node, ...props}) => <a style={{ color: '#a78bfa', textDecoration: 'none' }} {...props} />
+      }}
+    >
+      {content}
+    </ReactMarkdown>
+  );
+};
+
 const SUBJECTS = ['Physics', 'Biology', 'Math', 'History'];
 
 type SortMode = 'newest' | 'oldest' | 'az' | 'za';
@@ -278,32 +309,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
           </div>
           {masterExpanded && (
             <div className={styles.masterCardBody}>
-              <ReactMarkdown
-                remarkPlugins={[remarkMath, remarkGfm]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  code({ node, inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    if (!inline && match && match[1] === 'mermaid') {
-                      return <MermaidChart chart={String(children).replace(/\n$/, '')} />;
-                    }
-                    return (
-                      <code className={className} style={{ background: '#1e1e2e', padding: '2px 4px', borderRadius: '4px', fontSize: '90%' }} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  h1: ({node, ...props}) => <h1 style={{ marginTop: '1.5em', marginBottom: '0.5em', color: '#fff', fontSize: '1.8em', borderBottom: '1px solid #333', paddingBottom: '0.3em' }} {...props} />,
-                  h2: ({node, ...props}) => <h2 style={{ marginTop: '1.2em', marginBottom: '0.5em', color: '#e2e8f0', fontSize: '1.4em' }} {...props} />,
-                  h3: ({node, ...props}) => <h3 style={{ marginTop: '1em', marginBottom: '0.5em', color: '#cbd5e1', fontSize: '1.1em' }} {...props} />,
-                  p: ({node, ...props}) => <p style={{ marginBottom: '1em', lineHeight: '1.7' }} {...props} />,
-                  ul: ({node, ...props}) => <ul style={{ paddingLeft: '1.5em', marginBottom: '1em' }} {...props} />,
-                  li: ({node, ...props}) => <li style={{ marginBottom: '0.25em' }} {...props} />,
-                  a: ({node, ...props}) => <a style={{ color: '#a78bfa', textDecoration: 'none' }} {...props} />
-                }}
-              >
-                {masterNote}
-              </ReactMarkdown>
+              <StudyGuideRenderer content={masterNote} />
             </div>
           )}
         </div>
@@ -324,32 +330,7 @@ const NotesPage: React.FC<NotesPageProps> = ({
               </button>
             </div>
             <div className={styles.modalBody}>
-              <ReactMarkdown
-                remarkPlugins={[remarkMath, remarkGfm]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  code({ node, inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    if (!inline && match && match[1] === 'mermaid') {
-                      return <MermaidChart chart={String(children).replace(/\n$/, '')} />;
-                    }
-                    return (
-                      <code className={className} style={{ background: '#1e1e2e', padding: '2px 4px', borderRadius: '4px', fontSize: '90%' }} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  h1: ({node, ...props}) => <h1 style={{ marginTop: '1.5em', marginBottom: '0.5em', color: '#fff', fontSize: '1.8em', borderBottom: '1px solid #333', paddingBottom: '0.3em' }} {...props} />,
-                  h2: ({node, ...props}) => <h2 style={{ marginTop: '1.2em', marginBottom: '0.5em', color: '#e2e8f0', fontSize: '1.4em' }} {...props} />,
-                  h3: ({node, ...props}) => <h3 style={{ marginTop: '1em', marginBottom: '0.5em', color: '#cbd5e1', fontSize: '1.1em' }} {...props} />,
-                  p: ({node, ...props}) => <p style={{ marginBottom: '1em', lineHeight: '1.7' }} {...props} />,
-                  ul: ({node, ...props}) => <ul style={{ paddingLeft: '1.5em', marginBottom: '1em' }} {...props} />,
-                  li: ({node, ...props}) => <li style={{ marginBottom: '0.25em' }} {...props} />,
-                  a: ({node, ...props}) => <a style={{ color: '#a78bfa', textDecoration: 'none' }} {...props} />
-                }}
-              >
-                {masterNote}
-              </ReactMarkdown>
+              <StudyGuideRenderer content={masterNote} />
             </div>
           </div>
         </div>
