@@ -2,6 +2,7 @@
 
 
 DEMONSTRATION LINK: https://drive.google.com/drive/folders/1hvLkbhq6KRPkW2lDH4f2UZ5izQP9CEzL?usp=sharing
+WEBSITE LINK:https://idyllic-uncompensated-ozie.ngrok-free.dev/   OR  https://tinyurl.com/fusionnotes
 
 ### The AI-Powered Collaborative Study Suite
 
