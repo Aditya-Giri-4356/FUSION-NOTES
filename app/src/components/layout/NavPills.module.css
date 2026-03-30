@@ -1,0 +1,13 @@
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.pill {
+  font-size: 13px;
+  padding: 8px 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
