@@ -24,6 +24,14 @@ app.add_middleware(
 
 security = HTTPBearer()
 
+@app.get("/")
+async def root():
+    return {"status": "success", "message": "FusionNotes Backend is Live!", "version": "1.0.1"}
+
+@app.get("/api/health")
+async def health():
+    return {"status": "ok"}
+
 supabase_url = os.environ.get("SUPABASE_URL")
 supabase_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY")
 if not supabase_url or not supabase_key:
